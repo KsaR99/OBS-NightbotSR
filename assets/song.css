@@ -1,0 +1,63 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 3rem;
+    overflow: hidden;
+}
+
+@font-face {
+    font-family: impact-regular, sans-serif;
+    src: url(./fonts/impact.ttf);
+    font-display: swap;
+}
+
+@font-face {
+    font-family: raleway-bold, sans-serif;
+    src: url(./fonts/Raleway-Bold.ttf);
+    font-display: swap;
+}
+
+@keyframes scrollContainer {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes shadowAnimation {
+
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 2rem;
+    margin: 0.25rem 0;
+    overflow: hidden;
+}
+
+.scrollText {
+    position: absolute;
+    display: inline-block;
+    white-space: nowrap;
+    font: var(--text-size, 1.3rem) 'impact-regular', sans-serif;
+    color: transparent;
+    background: linear-gradient(var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    padding: 0.125rem 0.5rem;
+    will-change: transform;
+    animation: scrollContainer var(--animation-time, 25s) linear infinite;
+}
+
+.song-title {
+    font-family: 'raleway-bold', sans-serif;
+    transition: color 0.3s ease;
+}
+
+.nickname {
+    font-family: 'raleway-bold', sans-serif;
+    transition: color 0.3s ease;
+}
