@@ -27,7 +27,12 @@ body {
 }
 
 @keyframes shadowAnimation {
-
+    0% {
+        box-shadow: inset 0 0 6px 0 var(--bgShadowColor);
+    }
+    100% {
+        box-shadow: inset 0 0 12px .2rem var(--bgShadowColor);
+    }
 }
 
 .container {
@@ -47,14 +52,14 @@ body {
     background: linear-gradient(var(--gradient-start), var(--gradient-end));
     -webkit-background-clip: text;
     background-clip: text;
-    padding: 0.125rem 0.5rem;
+    padding: 0.125rem 0.2rem;
     will-change: transform;
     animation: scrollContainer var(--animation-time, 25s) linear infinite;
 }
 
 .song-title {
     font-family: 'raleway-bold', sans-serif;
-    transition: color 0.3s ease;
+    transition: color 1.5s ease;
 }
 
 .nickname {

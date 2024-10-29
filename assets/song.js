@@ -1,84 +1,83 @@
-let scrollTextElement;
 let currentlyPlayingElement;
 let requestedByElement;
 let enableCleanTitle;
 let maxAllowedTitleLength;
 
-const regex = /(.+?) - Requested by: ([^\s]+)/;
-
-document.addEventListener('DOMContentLoaded', function() {
-    scrollTextElement = document.querySelector('.scrollText');
+document.addEventListener('DOMContentLoaded', function () {
+    const scrollTextElement = document.querySelector('.scrollText');
     currentlyPlayingElement = document.createElement('span');
     requestedByElement = document.createElement('span');
 
     currentlyPlayingElement.classList.add('song-title');
     requestedByElement.classList.add('nickname');
 
-    const songPrefix = document.createTextNode('🎵 Song: ');
-    const requestedByPrefix = document.createTextNode(' Requested by: ');
+    const songPrefix = document.createTextNode(`${settingsJson.labels.songPrefix} `);
+    const requestedByPrefix = document.createTextNode(` ${settingsJson.labels.requestedByPrefix} `);
 
-    scrollTextElement.appendChild(songPrefix);
-    scrollTextElement.appendChild(currentlyPlayingElement);
-    scrollTextElement.appendChild(requestedByPrefix);
-    scrollTextElement.appendChild(requestedByElement);
+    scrollTextElement.append(songPrefix, currentlyPlayingElement, requestedByPrefix, requestedByElement);
 
     loadSettings();
     updateCurrentSong();
 });
 
-
 function shortTitleLength(title) {
-    if (title.length > maxAllowedTitleLength + 5) {
-        return title.substr(0, maxAllowedTitleLength) + ' […]';
+    const ommitedTextPostfix = ' […]';
+    if (title.length > maxAllowedTitleLength + ommitedTextPostfix.length) {
+        return title.slice(0, maxAllowedTitleLength) + ommitedTextPostfix;
     }
+
     return title;
 }
 
 function cleanTitle(title) {
-    title = title.replace(/\bproduced by\b|\bproduced\.\b/gi, 'prod.')
-        .replace(/\bfeat\.?\b/gi, 'ft.')
+    title = title.replace(/\bfeat\.?\b/gi, 'ft.')
+        .replace(/\bproduced by\b|\bproduced\.\b/gi, 'prod.')
         .replace(/\s*[\[(][^()\[\]]*(Official|Lyric|Music|Video|Audio)[^()\[\]]*[\])]\s*/gi, '');
     return shortTitleLength(title).trim();
 }
 
 function applySettings(settings) {
-    const { labels, themes, settings: appSettings } = settings;
+    const { settings: appSettings } = settings;
     const colors = theme.colors;
 
-    document.documentElement.style.setProperty('--text-size', appSettings.textSize);
-    document.documentElement.style.setProperty('--gradient-start', colors.gradientStart);
-    document.documentElement.style.setProperty('--gradient-end', colors.gradientEnd);
-    document.documentElement.style.setProperty('--animation-time', `${appSettings.scrollSpeed || 25}s`);
+    const rootStyle = document.documentElement.style;
+
+    rootStyle.setProperty('--text-size', appSettings.textSize);
+    rootStyle.setProperty('--gradient-start', colors.gradientStart);
+    rootStyle.setProperty('--gradient-end', colors.gradientEnd);
+    rootStyle.setProperty('--animation-time', `${appSettings.scrollSpeed || 25}s`);
 
     currentlyPlayingElement.style.color = colors.songTitle;
     requestedByElement.style.color = colors.nickname;
 
     if (appSettings.enableBackgroundShadow) {
         const bgShadowColor = colors.backgroundShadow;
-        scrollTextElement.style.boxShadow = `inset 0 0 0.5rem 0.1rem ${bgShadowColor}, 0 0 0.8rem 0 ${bgShadowColor}`;
+        rootStyle.setProperty('--bgShadowColor', bgShadowColor);
+
+        document.querySelector('.container').style.animation = 'shadowAnimation 1.5s alternate infinite';
     }
 
     maxAllowedTitleLength = appSettings.maxTitleLength ?? 85;
     enableCleanTitle = appSettings.enableCleanTitle ?? false;
 
-    const refreshTimeInSeconds = appSettings.refreshTime || 5;
+    const refreshTimeInSeconds = appSettings.refreshTime ?? 5;
     setInterval(updateCurrentSong, refreshTimeInSeconds * 1000);
 }
 
 function loadTheme(themeName) {
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = `./assets/themes/${themeName}.js`;
-        script.defer = true;
 
+        script.src = `./assets/themes/${themeName.toLowerCase()}.js`;
+        script.defer = true;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Failed to load theme.'));
 
         const settingsScript = document.querySelector('script[src="./assets/song.js"]');
+
         document.head.insertBefore(script, settingsScript);
     });
 }
-
 
 async function loadSettings() {
     try {
@@ -93,9 +92,12 @@ async function loadSettings() {
 async function updateCurrentSong() {
     try {
         const response = await fetch('./current_song.txt');
-        if (!response.ok) throw new Error(response.statusText);
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        } 
 
         const currentSong = await response.text();
+        const regex = /(.+?) - Requested by: ([^\s]+)/;
         const match = currentSong.match(regex);
 
         if (match && match[2]) {
