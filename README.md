@@ -9,6 +9,7 @@
 ## Setup: 
 1. Go into folder `Documents/Nightbot` or paste this in path: `%USERPROFILE%\Documents\Nightbot`.
   > Right there (if you using `Nightbot` app) should be already file `current_song.txt`.
+
   > Extract here all files.
 2. Open `OBS` in `Sources` > `Add` (or + sign) > `Browser`;
   > Name it something like a `Current Song Nightbot`.
