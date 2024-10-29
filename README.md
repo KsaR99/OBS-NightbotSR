@@ -22,6 +22,18 @@
   > check `song_settings.js` file.
 
 - `theme` One from themes to use. `regular`, `camo`, `blood`, `halloween`, `pink`, `winter`.
+
+![Regular](screenshots/theme_regular.png) regular theme.
+
+![Camo theme](screenshots/theme_camo.png) camo theme.
+
+![Blood theme](screenshots/theme_blood.png) blood theme.
+
+![Halloween theme](screenshots/theme_halloween.png) halloween theme.
+
+![Winter theme](screenshots/theme_winter.png) winter theme.
+
+![Pink theme](screenshots/theme_pink.png) pink theme.
 - `textSize` Font size. Recommended `1.3rem`
 - `scrollSpeed` How quick text scrolling in seconds, recommended `25`.
 - `maxTitleLength` Length after which title is truncated to not overflow too much. Recommended `85`.
