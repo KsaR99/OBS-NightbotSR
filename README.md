@@ -12,9 +12,13 @@
   > Extract here all files.
 2. Open `OBS` in `Sources` > `Add` (or + sign) > `Browser`;
   > Name it something like a `Current Song Nightbot`.
+
   > Mark as `local file` ✅
+
   > Click `Browse` & Paste path `%USERPROFILE%\Documents\Nightbot` then choose `song.html` file.
+
   > height I recommend to set something like `50` for `720p`.
+
   > Click `ok`.
 4. Now should work.
 
