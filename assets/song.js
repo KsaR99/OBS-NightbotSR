@@ -4,15 +4,15 @@ let enableCleanTitle;
 let maxAllowedTitleLength;
 
 document.addEventListener('DOMContentLoaded', function () {
-    const scrollTextElement = document.querySelector('.scrollText');
     currentlyPlayingElement = document.createElement('span');
-    requestedByElement = document.createElement('span');
-
     currentlyPlayingElement.classList.add('song-title');
+
+    requestedByElement = document.createElement('span');
     requestedByElement.classList.add('nickname');
 
     const songPrefix = document.createTextNode(`${settingsJson.labels.songPrefix} `);
-    const requestedByPrefix = document.createTextNode(` ${settingsJson.labels.requestedByPrefix} `);
+    const requestedByPrefix = document.createTextNode(`\t${settingsJson.labels.requestedByPrefix} `);
+    const scrollTextElement = document.querySelector('.scrollText');
 
     scrollTextElement.append(songPrefix, currentlyPlayingElement, requestedByPrefix, requestedByElement);
 
@@ -33,13 +33,13 @@ function cleanTitle(title) {
     title = title.replace(/\bfeat\.?\b/gi, 'ft.')
         .replace(/\bproduced by\b|\bproduced\.\b/gi, 'prod.')
         .replace(/\s*[\[(][^()\[\]]*(Official|Lyric|Music|Video|Audio)[^()\[\]]*[\])]\s*/gi, '');
+
     return shortTitleLength(title).trim();
 }
 
 function applySettings(settings) {
     const { settings: appSettings } = settings;
     const colors = theme.colors;
-
     const rootStyle = document.documentElement.style;
 
     rootStyle.setProperty('--text-size', appSettings.textSize);
@@ -51,9 +51,7 @@ function applySettings(settings) {
     requestedByElement.style.color = colors.nickname;
 
     if (appSettings.enableBackgroundShadow) {
-        const bgShadowColor = colors.backgroundShadow;
-        rootStyle.setProperty('--bgShadowColor', bgShadowColor);
-
+        rootStyle.setProperty('--bgShadowColor', colors.backgroundShadow);
         document.querySelector('.container').style.animation = 'shadowAnimation 1.5s alternate infinite';
     }
 
@@ -91,13 +89,14 @@ async function loadSettings() {
 
 async function updateCurrentSong() {
     try {
-        const response = await fetch('./current_song.txt');
+        const nightbotCurrentSongPath = './current_song.txt';
+        const response = await fetch(nightbotCurrentSongPath);
         if (!response.ok) {
             throw new Error(response.statusText);
         } 
 
         const currentSong = await response.text();
-        const regex = /(.+?) - Requested by: ([^\s]+)/;
+        const regex = /(.+?)\s+- Requested by: ([^\s]+)/;
         const match = currentSong.match(regex);
 
         if (match && match[2]) {
