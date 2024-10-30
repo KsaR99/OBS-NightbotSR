@@ -1,21 +1,21 @@
 body {
+    overflow: hidden;
     margin: 0;
     padding: 0;
     height: 3rem;
-    overflow: hidden;
 }
 
 @font-face {
+    font-display: fallback;
     font-family: Impact;
-    src: url(./fonts/impact.woff2);
-    font-display: fallback;
+    src: url(fonts/impact.woff2);
 }
 
 @font-face {
-    font-family: Inter;
-    src: url(./fonts/Inter_18pt-ExtraBold.woff2);
-    font-weight: bold;
     font-display: fallback;
+    font-family: Inter;
+    font-weight: bold;
+    src: url(fonts/Inter_18pt-ExtraBold.woff2);
 }
 
 @keyframes scrollContainer {
@@ -37,43 +37,42 @@ body {
 }
 
 .container {
+    contain: layout size;
+    overflow: hidden;
     position: relative;
     width: 100%;
     height: 2rem;
-    margin: .25rem 0;
-    overflow: hidden;
-    contain: layout size;
+    margin: 0.25rem 0;
 }
 
 .scrollText {
+    transform: translateY(0); /* GPU Acceleration. */
     position: absolute;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    white-space: nowrap;
+    padding: 0.125rem 0.2rem;
     font: var(--text-size, 1.3rem) Impact, sans-serif;
-    color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
     background-image: linear-gradient(var(--gradient-start), var(--gradient-end));
-    padding: .125rem .2rem;
+    color: transparent;
+    white-space: nowrap;
     line-height: 2rem;
     vertical-align: middle;
     animation: scrollContainer var(--animation-time, 30s) linear infinite;
-    transform: translateY(0);
 }
 
 .song-title,
 .nickname {
     contain: style layout;
+    font-family: Inter, sans-serif;
 }
 
 .song-title {
-    font-family: Inter, sans-serif;
     transition: color 1.5s ease;
 }
 
 .nickname {
-    font-family: Inter, sans-serif;
-    transition: color 0.3s ease;
+    transition: color 1s ease;
 }
