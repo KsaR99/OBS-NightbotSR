@@ -1,32 +1,31 @@
 # NightbotSR-OBS
- OBS widget for current song.
-
+ `OBS` widget for displaying the __current song__ from `Nightbot`.
 
 ## Requirements:
   - [NightBot app](https://docs.nightbot.tv/app) installed.
   - [OBS app](https://obsproject.com/download) installed.
 
 ## Setup: 
-1. Go into folder `Documents/Nightbot` or paste this in path: `%USERPROFILE%\Documents\Nightbot`.
-  > Right there (if you using `Nightbot` app) should be already file `current_song.txt`.
-
-  > Extract here all files.
-2. Open `OBS` in `Sources` > `Add` (or + sign) > `Browser`;
-  > Name it something like a `Current Song Nightbot`.
-
-  > Mark as `local file` ✅
-
-  > Click `Browse` & Paste path `%USERPROFILE%\Documents\Nightbot` then choose `song.html` file.
-
-  > height I recommend to set something like `50` for `720p`.
-
-  > Click `ok`.
-4. Now it should work.
-
+1. **Prepare the Folder**.
+  - Go to the `Documents/Nightbot` folder or paste the following in path bar: `%USERPROFILE%\Documents\Nightbot`.
+  - If the `Nightbot` app is installed, you should see a file named `current_song.txt` here.
+2. **Download & Place Project Files**.
+  - Download the project as a zip file, extract it, and move all files into the `Documents\Nightbot` folder.
+  - Ensure that `song.html` is in the same directory level as `current_song.txt`.
+  - ⚠️ Move all other project files and folders here too.
+3. **Add Widget to `OBS`**.
+  - Open `OBS` and navigate to `Sources` > `Add` (or press the `+` sign) > `Browser`.
+  - Name the new browser source something like **`Current Song Nightbot`**.
+  - Enable `local file` ✅
+  - Click `Browse` & Paste to path bar `%USERPROFILE%\Documents\Nightbot` then choose `song.html` file.
+  - (__Optional__) For a `720p` layout, set the height to `50`.
+  - Click `ok` to save.
+4. **Test it**.
+  - The widget should now display the current song in OBS.
 ## Additional features
-  > check `song_settings.js` file.
+  You can customize settings in `song_settings.js`:
 
-- `theme` One from themes to use. Either `regular`, `camo`, `blood`, `halloween`, `pink` or `winter`.
+- `theme`: Choose one of the following themes: `regular`, `camo`, `blood`, `halloween`, `winter` or `pink`.
 
 ![Regular](screenshots/theme_regular.png) Regular theme.
 
@@ -39,12 +38,11 @@
 ![Winter theme](screenshots/theme_winter.png) Winter theme.
 
 ![Pink theme](screenshots/theme_pink.png) Pink theme.
-- `textSize` Font size. Recommended `1.3rem`
-- `scrollSpeed` How quick text scrolling in seconds, recommended `25`.
-- `maxTitleLength` Length after which title is truncated to not overflow too much. Recommended `85`.
-- `enableCleanTitle` boolean `true` or `false`; Removes all "`(Official music video)`" tags from title.
-and changes some "`feat.`" to "`ft.`", "`produced by`" to "`prod.`"
-- `enableBackgroundShadow` boolean `true`/`false`, Enables some extra shadow.
-- `refreshTime` How often check if next song changed on disc. `5` seconds recommended.
+- `textSize` {`string`}: Define font size.
+- `scrollSpeed` {`integer`}: Adjust text scrolling speed, in seconds.
+- `maxTitleLength` {`integer`}: Set max title length before truncation.
+- `enableCleanTitle` {`boolean`} Set to `true` to clean up tags such as `(Official Music Video)`, and standardize phrases like `feat.` to `ft.` and `produced by` to `prod.`.
+- `enableBackgroundShadow` {`boolean`} (`true`/`false`): Add a background shadow by setting to `true`.
+- `refreshTime` {`integer`}: Set interval (in seconds) to check if the song has changed on harddrive.
 
-  > After any changes done double click on widget name `Current Song Nightbot` > `Refresh cache of current page` to apply changes.
+⚠️ Note: After any changes, double-click the widget name in sources **`Current Song Nightbot`** and click `Refresh cache of current page` to apply changes.
