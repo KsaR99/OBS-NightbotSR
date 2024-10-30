@@ -7,26 +7,24 @@
   - [OBS app](https://obsproject.com/download) installed.
 
 ## Setup: 
-1. Go into folder `Documents/Nightbot` or paste this in path: `%USERPROFILE%\Documents\Nightbot`.
-  > Right there (if you using `Nightbot` app) should be already file `current_song.txt`.
-
-  > Extract here all files.
+1. Go to the `Documents/Nightbot` folder, or paste this in path: `%USERPROFILE%\Documents\Nightbot`.
+  - If using the `Nightbot` app, you should already see a `current_song.txt` file here.
+  - Download project as zip, extract all project files.
+  - And move them to this folder.
+  - The `song.html` file must be __in the same folder__ level as `current_song.txt`.
+  - ⚠️ The remaining files and folders be moved here too.
 2. Open `OBS` in `Sources` > `Add` (or + sign) > `Browser`;
-  > Name it something like a `Current Song Nightbot`.
-
-  > Mark as `local file` ✅
-
-  > Click `Browse` & Paste path `%USERPROFILE%\Documents\Nightbot` then choose `song.html` file.
-
-  > height I recommend to set something like `50` for `720p`.
-
-  > Click `ok`.
+  - Name it something like a **`Current Song Nightbot`**.
+  - Mark as `local file` ✅
+  - Click `Browse` & Paste path `%USERPROFILE%\Documents\Nightbot` then choose `song.html` file.
+  - __Optional__ height I recommend to set something like `50` for `720p`.
+  - Click `ok`.
 4. Now it should work.
 
 ## Additional features
-  > check `song_settings.js` file.
+  Check `song_settings.js` file.
 
-- `theme` One from themes to use. Either `regular`, `camo`, `blood`, `halloween`, `pink` or `winter`.
+- `theme`: Choose one of the following themes: `regular`, `camo`, `blood`, `halloween`, `winter` or `pink`.
 
 ![Regular](screenshots/theme_regular.png) Regular theme.
 
@@ -39,12 +37,11 @@
 ![Winter theme](screenshots/theme_winter.png) Winter theme.
 
 ![Pink theme](screenshots/theme_pink.png) Pink theme.
-- `textSize` Font size. Recommended `1.3rem`
-- `scrollSpeed` How quick text scrolling in seconds, recommended `25`.
-- `maxTitleLength` Length after which title is truncated to not overflow too much. Recommended `85`.
-- `enableCleanTitle` boolean `true` or `false`; Removes all "`(Official music video)`" tags from title.
-and changes some "`feat.`" to "`ft.`", "`produced by`" to "`prod.`"
-- `enableBackgroundShadow` boolean `true`/`false`, Enables some extra shadow.
-- `refreshTime` How often check if next song changed on disc. `5` seconds recommended.
+- `textSize` {`string`}: Font size.
+- `scrollSpeed` {`integer`}: Speed of text scrolling, in seconds.
+- `maxTitleLength` {`integer`}: Maximum title length before truncation.
+- `enableCleanTitle` {`boolean`} (`true`/`false`): Removes tags like "`(Official Music Video)`" and standardizes "`feat.`" to "`ft.`" and "`produced by`" to "`prod.`".
+- `enableBackgroundShadow` {`boolean`} (`true`/`false`): Adds background shadow.
+- `refreshTime` {`integer`}: Interval (in seconds) to check if the song has changed on disc.
 
-  > After any changes done double click on widget name `Current Song Nightbot` > `Refresh cache of current page` to apply changes.
+⚠️ **After any changes, double-click the widget name **`Current Song Nightbot`** and select `Refresh cache of current page` to apply.**
