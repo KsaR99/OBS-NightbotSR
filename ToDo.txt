@@ -1,1 +1,0 @@
-- Make song fade away if has the same title & "requested by" above 605 seconds (60s*10m + 5s) (Nightbot limits song to 10 min.) or make "Nothing playing".

@@ -13,11 +13,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     scrollTextElement.append(songPrefix, currentlyPlayingElement, requestedByPrefix, requestedByElement);
 
-    loadSettings(currentlyPlayingElement, requestedByElement);
-    updateCurrentSong(currentlyPlayingElement, requestedByElement);
+    loadSettings(scrollTextElement, currentlyPlayingElement, requestedByElement);
+    updateCurrentSong(scrollTextElement, currentlyPlayingElement, requestedByElement);
 });
 
 let maxAllowedTitleLength;
+let enableCleanTitle;
+let lastUpdateTime = Date.now();
+let lastTitle = '';
+let lastNickname = '';
 
 /**
  * Shortens the song title if it exceeds the maximum allowed length and appends an ellipsis.
@@ -34,8 +38,7 @@ function shortTitleLength(title) {
     return title;
 }
 
-let enableCleanTitle;
-function applySettings(settings, currentlyPlayingElement, requestedByElement) {
+function applySettings(settings, scrollTextElement, currentlyPlayingElement, requestedByElement) {
     const { settings: appSettings } = settings;
     const colors = theme.colors;
     const rootStyle = document.documentElement.style;
@@ -57,29 +60,30 @@ function applySettings(settings, currentlyPlayingElement, requestedByElement) {
     enableCleanTitle = appSettings.enableCleanTitle ?? false;
 
     const refreshTimeInSeconds = appSettings.refreshTime ?? 5;
-    setInterval(updateCurrentSong, refreshTimeInSeconds * 1000);
+    setInterval(() => updateCurrentSong(scrollTextElement, currentlyPlayingElement, requestedByElement), refreshTimeInSeconds * 1000);
 }
 
 function loadTheme(themeName) {
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
-
         script.src = `./assets/themes/${themeName.toLowerCase()}.js`;
         script.defer = true;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Failed to load theme.'));
-
         const settingsScript = document.querySelector('script[src="./assets/song.js"]');
-
         document.head.insertBefore(script, settingsScript);
     });
 }
 
-async function loadSettings(currentlyPlayingElement, requestedByElement) {
+async function loadSettings(scrollTextElement, currentlyPlayingElement, requestedByElement) {
     try {
         await loadTheme(settingsJson.settings.theme);
-
-        applySettings(settingsJson, currentlyPlayingElement, requestedByElement);
+        applySettings(
+            settingsJson,
+            scrollTextElement,
+            currentlyPlayingElement,
+            requestedByElement
+        );
     } catch (error) {
         console.error('Error loading settings:', error);
     }
@@ -100,21 +104,41 @@ function cleanTitle(title) {
     ).trim();
 }
 
-async function updateCurrentSong(currentlyPlayingElement, requestedByElement) {
+function updateOpacity(scrollTextElement) {
+    const currentTime = Date.now();
+    const maxEstaminedSongDisplayTime = (10 * 60) * 1000 + 6;
+    let opacity = '1.0';
+
+    if (currentTime - lastUpdateTime >= maxEstaminedSongDisplayTime) {
+        opacity = '0.3';
+    }
+
+    scrollTextElement.style.opacity = opacity;
+}
+
+async function updateCurrentSong(scrollTextElement, currentlyPlayingElement, requestedByElement) {
     try {
         const currentSongPath = './current_song.txt';
         const response = await fetch(currentSongPath);
         if (!response.ok) {
             throw new Error(response.statusText);
-        } 
+        }
 
         const currentSong = await response.text();
         const match = currentSong.match(/(.+?)\s+- Requested by: (\S+)/);
 
         if (match && match[2]) {
-            const [ , songTitle, nickname ] = match;
+            const [, songTitle, nickname] = match;
             const processedTitle = enableCleanTitle ? cleanTitle(songTitle) : songTitle;
             const finalTitle = shortTitleLength(processedTitle);
+
+            if (finalTitle !== lastTitle || nickname !== lastNickname) {
+                lastUpdateTime = Date.now();
+                lastTitle = finalTitle;
+                lastNickname = nickname;
+
+                scrollTextElement.style.opacity = '1.0';
+            }
 
             if (currentlyPlayingElement.textContent !== finalTitle) {
                 currentlyPlayingElement.textContent = finalTitle;
@@ -122,6 +146,8 @@ async function updateCurrentSong(currentlyPlayingElement, requestedByElement) {
             if (requestedByElement.textContent !== `@${nickname}`) {
                 requestedByElement.textContent = `@${nickname}`;
             }
+
+            updateOpacity(scrollTextElement);
         }
     } catch (error) {
         console.error('Error fetching the current song:', error);

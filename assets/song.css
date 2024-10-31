@@ -61,6 +61,7 @@ body {
     line-height: 2rem;
     vertical-align: middle;
     animation: scrollContainer var(--animation-time) linear infinite;
+    transition: opacity 3.5s ease;
 }
 
 .song-title,
