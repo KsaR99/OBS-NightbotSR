@@ -1,9 +1,9 @@
 const theme = {
     colors: {
-        songTitle: "#ffdbdb",
-        nickname: "#8256d6",
-        gradientStart: "#850000",
-        gradientEnd: "#bf1313",
-        backgroundShadow: "rgba(244, 7, 7, 0.65)"
+        songTitle: "hsl(0, 100%, 93%)",
+        nickname: "hsl(261, 61%, 59%)",
+        gradientStart: "hsl(0, 100%, 26%)",
+        gradientEnd: "hsl(0, 82%, 41%)",
+        backgroundShadow: "hsla(0, 94%, 49%, 0.65)"
     }
 };

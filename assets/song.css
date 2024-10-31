@@ -52,7 +52,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.125rem 0.2rem;
-    font: var(--text-size, 1.3rem) Impact, sans-serif;
+    font: var(--text-size) Impact, sans-serif;
     -webkit-background-clip: text;
     background-clip: text;
     background-image: linear-gradient(var(--gradient-start), var(--gradient-end));
@@ -60,7 +60,7 @@ body {
     white-space: nowrap;
     line-height: 2rem;
     vertical-align: middle;
-    animation: scrollContainer var(--animation-time, 30s) linear infinite;
+    animation: scrollContainer var(--animation-time) linear infinite;
 }
 
 .song-title,
@@ -75,4 +75,13 @@ body {
 
 .nickname {
     transition: color 1s ease;
+}
+
+/** Fallbacks. */
+:root {
+    --text-size: 1.3rem;
+    --animation-time: 30s;
+    --bgShadowColor: hsla(196, 90%, 54%, 0.65);
+    --gradient-start: hsl(224, 100%, 72%);
+    --gradient-end: hsl(142, 100%, 58%);
 }

@@ -1,43 +1,41 @@
-let currentlyPlayingElement;
-let requestedByElement;
-let enableCleanTitle;
-let maxAllowedTitleLength;
-
 document.addEventListener('DOMContentLoaded', function () {
-    currentlyPlayingElement = document.createElement('span');
+    let currentlyPlayingElement = document.createElement('span');
     currentlyPlayingElement.classList.add('song-title');
 
-    requestedByElement = document.createElement('span');
+    const requestedByElement = document.createElement('span');
     requestedByElement.classList.add('nickname');
 
-    const songPrefix = document.createTextNode(`${settingsJson.labels.songPrefix} `);
-    const requestedByPrefix = document.createTextNode(`\t${settingsJson.labels.requestedByPrefix} `);
+    const { songPrefix, requestedByPrefix } = settingsJson.labels;
+
+    const songPrefixNode = document.createTextNode(`${songPrefix} `);
+    const requestedByPrefixNode = document.createTextNode(`\t${requestedByPrefix} `);
     const scrollTextElement = document.querySelector('.scrollText');
 
     scrollTextElement.append(songPrefix, currentlyPlayingElement, requestedByPrefix, requestedByElement);
 
-    loadSettings();
-    updateCurrentSong();
+    loadSettings(currentlyPlayingElement, requestedByElement);
+    updateCurrentSong(currentlyPlayingElement, requestedByElement);
 });
 
+let maxAllowedTitleLength;
+
+/**
+ * Shortens the song title if it exceeds the maximum allowed length and appends an ellipsis.
+ *
+ * @param {string} title - The original song title.
+ * @returns {string} - The possibly shortened song title with an ellipsis if truncated.
+ */
 function shortTitleLength(title) {
-    const ommitedTextPostfix = ' […]';
-    if (title.length > maxAllowedTitleLength + ommitedTextPostfix.length) {
-        return title.slice(0, maxAllowedTitleLength) + ommitedTextPostfix;
+    const omittedTextPostfix = ' […]';
+    if (title.length > maxAllowedTitleLength + omittedTextPostfix.length) {
+        return title.slice(0, maxAllowedTitleLength) + omittedTextPostfix;
     }
 
     return title;
 }
 
-function cleanTitle(title) {
-    title = title.replace(/\bfeat\.?\b/gi, 'ft.')
-        .replace(/\bproduced by\b|\bproduced\.\b/gi, 'prod.')
-        .replace(/\s*[\[(][^()\[\]]*(Official|Lyric|Music|Video|Audio)[^()\[\]]*[\])]\s*/gi, '');
-
-    return shortTitleLength(title).trim();
-}
-
-function applySettings(settings) {
+let enableCleanTitle;
+function applySettings(settings, currentlyPlayingElement, requestedByElement) {
     const { settings: appSettings } = settings;
     const colors = theme.colors;
     const rootStyle = document.documentElement.style;
@@ -77,38 +75,52 @@ function loadTheme(themeName) {
     });
 }
 
-async function loadSettings() {
+async function loadSettings(currentlyPlayingElement, requestedByElement) {
     try {
-        await loadTheme(settingsJson.settings.theme.toLowerCase());
+        await loadTheme(settingsJson.settings.theme);
 
-        applySettings(settingsJson);
+        applySettings(settingsJson, currentlyPlayingElement, requestedByElement);
     } catch (error) {
         console.error('Error loading settings:', error);
     }
 }
 
-async function updateCurrentSong() {
+/**
+ * Cleans the song title by replacing common terms with abbreviations
+ * and removing unnecessary text like "Official Lyric Video".
+ *
+ * @param {string} title - The original song title.
+ * @returns {string} - The cleaned and possibly shortened song title.
+ */
+function cleanTitle(title) {
+    return shortTitleLength(
+        title.replace(/\bfeat\.?\b|\bfeaturing \b/gi, 'ft.')
+            .replace(/\bproduced by\b/gi, 'prod.')
+            .replace(/\s*[\[(][^()\[\]]*(Official|Lyric|Music|Video|Audio)[^()\[\]]*[\])]\s*/gi, '')
+    ).trim();
+}
+
+async function updateCurrentSong(currentlyPlayingElement, requestedByElement) {
     try {
-        const nightbotCurrentSongPath = './current_song.txt';
-        const response = await fetch(nightbotCurrentSongPath);
+        const currentSongPath = './current_song.txt';
+        const response = await fetch(currentSongPath);
         if (!response.ok) {
             throw new Error(response.statusText);
         } 
 
         const currentSong = await response.text();
-        const regex = /(.+?)\s+- Requested by: ([^\s]+)/;
-        const match = currentSong.match(regex);
+        const match = currentSong.match(/(.+?)\s+- Requested by: (\S+)/);
 
         if (match && match[2]) {
-            const [, songTitle, nickname] = match;
+            const [ , songTitle, nickname ] = match;
             const processedTitle = enableCleanTitle ? cleanTitle(songTitle) : songTitle;
             const finalTitle = shortTitleLength(processedTitle);
 
-            if (currentlyPlayingElement.innerText !== finalTitle) {
-                currentlyPlayingElement.innerText = finalTitle;
+            if (currentlyPlayingElement.textContent !== finalTitle) {
+                currentlyPlayingElement.textContent = finalTitle;
             }
-            if (requestedByElement.innerText !== `@${nickname}`) {
-                requestedByElement.innerText = `@${nickname}`;
+            if (requestedByElement.textContent !== `@${nickname}`) {
+                requestedByElement.textContent = `@${nickname}`;
             }
         }
     } catch (error) {
