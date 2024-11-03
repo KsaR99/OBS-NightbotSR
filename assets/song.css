@@ -2,7 +2,7 @@ body {
     overflow: hidden;
     margin: 0;
     padding: 0;
-    height: 3rem;
+    height: calc(var(--text-size) + 0.6rem);
 }
 
 @font-face {
@@ -32,7 +32,7 @@ body {
         box-shadow: inset 0 0 6px 0 var(--bgShadowColor);
     }
     to {
-        box-shadow: inset 0 0 12px 0.2rem var(--bgShadowColor);
+        box-shadow: inset 0 0 12px 6px var(--bgShadowColor);
     }
 }
 
@@ -40,28 +40,36 @@ body {
     contain: layout size;
     overflow: hidden;
     position: relative;
-    width: 100%;
-    height: 2rem;
-    margin: 0.25rem 0;
+    z-index: 1;
+    height: 100%;
 }
 
 .scrollText {
-    transform: translateY(0); /* GPU Acceleration. */
-    position: absolute;
+    transform: translateX(0); /* GPU Acceleration. */
+    white-space: nowrap;
     display: inline-flex;
+    position: absolute;
     align-items: center;
     gap: 0.5rem;
+    letter-spacing: 0.1rem;
     padding: 0.125rem 0.2rem;
     font: var(--text-size) Impact, sans-serif;
     -webkit-background-clip: text;
     background-clip: text;
     background-image: linear-gradient(var(--gradient-start), var(--gradient-end));
     color: transparent;
-    white-space: nowrap;
-    line-height: 2rem;
-    vertical-align: middle;
     animation: scrollContainer var(--animation-time) linear infinite;
-    transition: opacity 3.5s ease;
+    transition: opacity 5s ease;
+    z-index: 2;
+    filter: drop-shadow(1px 1px 2px hsl(0, 0%, 0%));
+}
+
+.scrollText--dimmed {
+    opacity: 0.3;
+}
+
+.enableShadowAnimation {
+    animation: shadowAnimation 3s alternate infinite;
 }
 
 .song-title,
@@ -82,7 +90,7 @@ body {
 :root {
     --text-size: 1.3rem;
     --animation-time: 30s;
-    --bgShadowColor: hsla(196, 90%, 54%, 0.65);
+    --bgShadowColor: hsla(196, 90%, 54%, 0.45);
     --gradient-start: hsl(224, 100%, 72%);
     --gradient-end: hsl(142, 100%, 58%);
 }

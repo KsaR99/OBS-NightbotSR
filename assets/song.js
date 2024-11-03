@@ -31,7 +31,8 @@ let lastNickname = '';
  */
 function shortTitleLength(title) {
     const omittedTextPostfix = ' […]';
-    if (title.length > maxAllowedTitleLength + omittedTextPostfix.length) {
+    const titleExceedsLength = title.length > maxAllowedTitleLength + omittedTextPostfix.length;
+    if (titleExceedsLength) {
         return title.slice(0, maxAllowedTitleLength) + omittedTextPostfix;
     }
 
@@ -40,6 +41,7 @@ function shortTitleLength(title) {
 
 function applySettings(settings, scrollTextElement, currentlyPlayingElement, requestedByElement) {
     const { settings: appSettings } = settings;
+
     const colors = theme.colors;
     const rootStyle = document.documentElement.style;
 
@@ -53,7 +55,8 @@ function applySettings(settings, scrollTextElement, currentlyPlayingElement, req
 
     if (appSettings.enableBackgroundShadow) {
         rootStyle.setProperty('--bgShadowColor', colors.backgroundShadow);
-        document.querySelector('.container').style.animation = 'shadowAnimation 1.5s alternate infinite';
+
+        document.querySelector('.container').classList.add('enableShadowAnimation');
     }
 
     maxAllowedTitleLength = appSettings.maxTitleLength ?? 85;
@@ -70,6 +73,7 @@ function loadTheme(themeName) {
         script.defer = true;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Failed to load theme.'));
+
         const settingsScript = document.querySelector('script[src="./assets/song.js"]');
         document.head.insertBefore(script, settingsScript);
     });
@@ -78,6 +82,7 @@ function loadTheme(themeName) {
 async function loadSettings(scrollTextElement, currentlyPlayingElement, requestedByElement) {
     try {
         await loadTheme(settingsJson.settings.theme);
+
         applySettings(
             settingsJson,
             scrollTextElement,
@@ -104,16 +109,16 @@ function cleanTitle(title) {
     ).trim();
 }
 
-function updateOpacity(scrollTextElement) {
+function updateOpacity(scrollTextElement, lastUpdateTime) {
     const currentTime = Date.now();
-    const maxEstaminedSongDisplayTime = (10 * 60) * 1000 + 6;
-    let opacity = '1.0';
-
-    if (currentTime - lastUpdateTime >= maxEstaminedSongDisplayTime) {
-        opacity = '0.3';
+    const maxSongDisplayTimeMs = (10 * 60) * 1000 + 6;
+    const elapsedTimeMs = currentTime - lastUpdateTime;
+    const shouldBeDimmed = elapsedTimeMs >= maxSongDisplayTimeMs;
+    if (shouldBeDimmed) {
+        scrollTextElement.classList.add('scrollText--dimmed');
+    } else {
+        scrollTextElement.classList.remove('scrollText--dimmed');
     }
-
-    scrollTextElement.style.opacity = opacity;
 }
 
 async function updateCurrentSong(scrollTextElement, currentlyPlayingElement, requestedByElement) {
@@ -132,22 +137,24 @@ async function updateCurrentSong(scrollTextElement, currentlyPlayingElement, req
             const processedTitle = enableCleanTitle ? cleanTitle(songTitle) : songTitle;
             const finalTitle = shortTitleLength(processedTitle);
 
-            if (finalTitle !== lastTitle || nickname !== lastNickname) {
+            const isNewSong = finalTitle !== lastTitle || nickname !== lastNickname;
+            if (isNewSong) {
                 lastUpdateTime = Date.now();
                 lastTitle = finalTitle;
                 lastNickname = nickname;
-
-                scrollTextElement.style.opacity = '1.0';
             }
 
-            if (currentlyPlayingElement.textContent !== finalTitle) {
+            const titleChanged = currentlyPlayingElement.textContent !== finalTitle;
+            if (titleChanged) {
                 currentlyPlayingElement.textContent = finalTitle;
             }
-            if (requestedByElement.textContent !== `@${nickname}`) {
+
+            const nicknameChanged = requestedByElement.textContent !== `@${nickname}`;
+            if (nicknameChanged) {
                 requestedByElement.textContent = `@${nickname}`;
             }
 
-            updateOpacity(scrollTextElement);
+            updateOpacity(scrollTextElement, lastUpdateTime);
         }
     } catch (error) {
         console.error('Error fetching the current song:', error);
